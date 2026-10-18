@@ -1,5 +1,3 @@
-# Color-dice-Delta
-Color-dice-delta
 --[[
     Color Dice Script (Delta Executor Edition)
     Style: gperya.neocities.org (colorful retro tile dice)

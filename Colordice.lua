@@ -1,10 +1,9 @@
---[[ Color Dice - Delta Executor Edition - mit Toggle-Button + schließbarem Fenster ]]
+--[[ Color Dice - Delta Executor Edition ]]
 
 local Players          = game:GetService("Players")
 local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui          = game:GetService("CoreGui")
-local TweenService     = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 
@@ -33,7 +32,6 @@ local DICE_COLORS = {
 }
 local DICE_FACES = { {5},{1,9},{1,5,9},{1,3,7,9},{1,3,5,7,9},{1,3,4,6,7,9} }
 
--- OPEN BUTTON
 local openBtn = Instance.new("TextButton")
 openBtn.Size = UDim2.new(0, 120, 0, 44)
 openBtn.Position = UDim2.new(0, 20, 1, -64)
@@ -46,7 +44,6 @@ openBtn.BorderSizePixel = 0
 openBtn.Parent = gui
 Instance.new("UICorner", openBtn).CornerRadius = UDim.new(0, 10)
 
--- WINDOW
 local win = Instance.new("Frame")
 win.Size = UDim2.new(0, 340, 0, 400)
 win.Position = UDim2.new(0.5, -170, 0.5, -200)
@@ -60,7 +57,6 @@ winStroke.Thickness = 3
 winStroke.Color = Color3.fromRGB(30, 30, 30)
 winStroke.Parent = win
 
--- TITLE BAR
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(1, 0, 0, 34)
 bar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -89,7 +85,6 @@ closeBtn.BorderSizePixel = 0
 closeBtn.Parent = bar
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
 
--- DRAG
 local dragging, dragStart, startPos
 bar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1
@@ -111,7 +106,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- DICE
 local diceFrame = Instance.new("Frame")
 diceFrame.Size = UDim2.new(0, 220, 0, 220)
 diceFrame.Position = UDim2.new(0.5, -110, 0, 50)
@@ -162,4 +156,23 @@ rollBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 rollBtn.Text = "ROLL"
 rollBtn.Font = Enum.Font.Code
 rollBtn.TextSize = 20
-rollBtn.TextColor3 = Color3.fromRGB(
+rollBtn.TextColor3 = Color3.fromRGB(245, 240, 220)
+rollBtn.BorderSizePixel = 0
+rollBtn.Parent = win
+Instance.new("UICorner", rollBtn).CornerRadius = UDim.new(0, 10)
+
+-- ==== LOGIK ====
+local rolling = false
+
+local function renderFace(n)
+    for i = 1, 9 do pips[i].BackgroundTransparency = 1 end
+    for _, idx in ipairs(DICE_FACES[n]) do
+        pips[idx].BackgroundTransparency = 0
+    end
+end
+
+local function roll()
+    if rolling then return end
+    rolling = true
+    rollBtn.Text = "..."
+    resultLabel.Text = "Roll

@@ -1,7 +1,7 @@
+loadstring([==[
 --[[ Color Dice - 4 Dice Edition (Delta Executor) ]]
 
 local Players          = game:GetService("Players")
-local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui          = game:GetService("CoreGui")
 local TweenService     = game:GetService("TweenService")
@@ -17,9 +17,7 @@ if old then old:Destroy() end
 
 local parentGui
 pcall(function() if gethui then parentGui = gethui() end end)
-if not parentGui then
-    parentGui = player:WaitForChild("PlayerGui")
-end
+if not parentGui then parentGui = player:WaitForChild("PlayerGui") end
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "ColorDiceRoot"
@@ -36,7 +34,6 @@ local THEME = {
     text    = Color3.fromRGB(240, 242, 248),
     subtext = Color3.fromRGB(150, 158, 178),
 }
-
 local DICE_COLORS = {
     Color3.fromRGB(255,  76,  76), Color3.fromRGB( 76, 132, 255),
     Color3.fromRGB( 76, 220, 128), Color3.fromRGB(255, 204,  56),
@@ -60,7 +57,6 @@ local function tween(obj, time, props, style, dir)
     return t
 end
 
--- Klick-Handler fuer Maus UND Touch, mit Debounce
 local function onClick(btn, fn)
     local last = 0
     local function handler()
@@ -105,9 +101,8 @@ local function playSound(id, vol, pitch)
     _delay(3, function() s:Destroy() end)
 end
 
--- ==== FENSTER (zuerst erstellen) ====
+-- FENSTER zuerst
 local win = Instance.new("Frame")
-win.Name = "Window"
 win.AnchorPoint = UDim2.new(0.5, 0, 0.5, 0)
 win.Position = UDim2.new(0.5, 0, 0.5, 0)
 win.Size = UDim2.new(0, 520, 0, 460)
@@ -126,7 +121,6 @@ winGrad.Rotation = 90
 winGrad.Color = ColorSequence.new(Color3.fromRGB(38, 42, 54), Color3.fromRGB(19, 21, 28))
 winGrad.Parent = win
 
--- ==== ÖFFNEN/SCHLIESSEN LOGIK ====
 local winOpen = false
 local function setOpen(open)
     winOpen = open
@@ -146,7 +140,7 @@ local function setOpen(open)
     end
 end
 
--- ==== ÖFFNEN-BUTTON (sofort verbinden) ====
+-- ÖFFNEN-BUTTON, sofort verbunden
 local openBtn = Instance.new("TextButton")
 openBtn.Size = UDim2.new(0, 156, 0, 48)
 openBtn.Position = UDim2.new(0, 20, 1, -68)
@@ -168,7 +162,6 @@ openStroke.Transparency = 0.25
 openStroke.Parent = openBtn
 onClick(openBtn, function() setOpen(not winOpen) end)
 
--- Titelleiste
 local bar = Instance.new("Frame")
 bar.Size = UDim2.new(1, 0, 0, 44)
 bar.BackgroundColor3 = Color3.fromRGB(18, 20, 27)
@@ -206,11 +199,9 @@ titleGrad.Color = ColorSequence.new({
 })
 titleGrad.Offset = Vector2.new(-1, 0)
 titleGrad.Parent = title
-TweenService:Create(
-    titleGrad,
+TweenService:Create(titleGrad,
     TweenInfo.new(2.6, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1, true),
-    { Offset = Vector2.new(1, 0) }
-):Play()
+    { Offset = Vector2.new(1, 0) }):Play()
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 28, 0, 28)
@@ -227,7 +218,6 @@ closeBtn.Parent = bar
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 8)
 onClick(closeBtn, function() setOpen(false) end)
 
--- ==== ZIEHEN ====
 local dragging, dragStart, startPos
 bar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1
@@ -249,7 +239,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- ==== WÜRFEL ====
 local diceRow = Instance.new("Frame")
 diceRow.Size = UDim2.new(1, -32, 0, DICE_SIZE + 14)
 diceRow.Position = UDim2.new(0, 16, 0, 58)
@@ -342,9 +331,8 @@ local function makeDice(index)
         pips[i] = pip
     end
 
-    local d = { holder = holder, glow = glow, body = body, pips = pips }
-    dice[index] = d
-    return d
+    dice[index] = { holder = holder, glow = glow, body = body, pips = pips }
+    return dice[index]
 end
 
 for i = 1, DICE_COUNT do makeDice(i) end
@@ -363,7 +351,6 @@ for i, d in ipairs(dice) do
     renderFace(d, math.random(1, 6))
 end
 
--- ==== ANZEIGE ====
 local sumLabel = Instance.new("TextLabel")
 sumLabel.Size = UDim2.new(1, -32, 0, 38)
 sumLabel.Position = UDim2.new(0, 16, 0, 186)
@@ -445,7 +432,6 @@ addHover(rollBtn, THEME.accent, Color3.fromRGB(255, 200, 90))
 addHover(resetBtn, THEME.panel2, Color3.fromRGB(58, 63, 80))
 addHover(openBtn, Color3.fromRGB(30, 33, 42), Color3.fromRGB(40, 44, 56))
 
--- ==== LOGIK ====
 local rolling = false
 local stats = { rolls = 0, best = 0, total = 0 }
 
@@ -507,7 +493,6 @@ local function roll()
 end
 
 onClick(rollBtn, roll)
-
 onClick(resetBtn, function()
     stats.rolls, stats.best, stats.total = 0, 0, 0
     sumLabel.Text = "SUMME: --"
@@ -515,10 +500,10 @@ onClick(resetBtn, function()
     statsLabel.Text = "Wuerfe: 0    Bester: 0    Schnitt: 0.0"
 end)
 
--- ==== KEYBIND (Notfall, falls Klicks blockiert werden) ====
 UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.RightShift then
         setOpen(not winOpen)
     end
 end)
+]==])()

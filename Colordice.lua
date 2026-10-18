@@ -175,4 +175,34 @@ local function roll()
     if rolling then return end
     rolling = true
     rollBtn.Text = "..."
-    resultLabel.Text = "Roll
+    resultLabel.Text = "Rolling..."
+
+    local face  = math.random(1, 6)
+    local color = DICE_COLORS[math.random(1, #DICE_COLORS)]
+
+    -- Wuerfel-Animation
+    for _ = 1, 12 do
+        renderFace(math.random(1, 6))
+        diceFrame.BackgroundColor3 = DICE_COLORS[math.random(1, #DICE_COLORS)]
+        task.wait(0.05)
+    end
+
+    -- End-Ergebnis
+    renderFace(face)
+    diceFrame.BackgroundColor3 = color
+    resultLabel.Text = "Ergebnis: " .. face
+    rollBtn.Text = "ROLL"
+    rolling = false
+end
+
+rollBtn.MouseButton1Click:Connect(roll)
+
+openBtn.MouseButton1Click:Connect(function()
+    win.Visible = not win.Visible
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    win.Visible = false
+end)
+
+renderFace(1)
